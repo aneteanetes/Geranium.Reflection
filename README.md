@@ -146,5 +146,26 @@ Available methods for 'call':
 
 Overloads for `call static generic`, `call generic extension`, `Call with T result` etc included.
 
+Example of using `Call` chain with `LiteDatabase`: gettin anonymous class from store in runtime:
+
+```C#
+
+var liteDbCollectionQueryable = LiteDb
+    .CallGeneric("GetCollection", new Type[] { type })
+    .Call("FindAll")
+    .CallGenericExtension("ToList", typeof(Enumerable), new[] { type })
+    .CallGenericExtension("AsQueryable", typeof(Queryable), new[] { type });
+    
+var filtered = SelectionModelConverter
+    .CallGeneric("Convert", new Type[] { type }, selection, liteDbCollectionQueryable)
+    .GetPropertyExprRaw("Result");
+    
+var (filteredPropertyConverted, anonymousType) = SelectionModelConverter
+    .CallGeneric<(IQueryable, Type)>("ConvertProperties", new Type[] { type }, selection.Properties, filtered); // returns IQueryable and anonymousType
+    
+var materialize = filteredPropertyConverted.CallGenericExtension("ToList", typeof(Enumerable), new[] { anonymousType });
+
+```
+
 ## TypeFromAssemblyExtensions
 Extensions for getting `Type`s and instances of `Type` from `Assembly` and assembly names loaded from `AppDomain.Current.BasePath`.
