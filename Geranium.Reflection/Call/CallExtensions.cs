@@ -23,7 +23,7 @@ namespace Geranium.Reflection
             var methodInfo = @object.GetType().GetMethods().FirstOrDefault(m => m.Name == method);
             if (methodInfo == default)
             {
-                methodInfo = @object.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(m => m.Name == method);
+                methodInfo = @object.GetType().GetInstanceNonPublicMethodInfo(method);
             }
             if (methodInfo != default)
             {
@@ -53,7 +53,7 @@ namespace Geranium.Reflection
             var methodInfo = @object.GetType().GetMethods().FirstOrDefault(m => m.Name == method);
             if (methodInfo == default)
             {
-                methodInfo = @object.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(m => m.Name == method);
+                methodInfo = @object.GetType().GetInstanceNonPublicMethodInfo(method);
             }
             if (methodInfo != default)
             {
@@ -93,15 +93,11 @@ namespace Geranium.Reflection
                 var @params = argsObj.Select(a => Expression.Parameter(a.GetType())).ToArray();
                 if (methodInfo.ReturnType != typeof(void))
                 {
-                    {
-                        return Expression.Lambda(Expression.Call(methodInfo, @params)).Compile().DynamicInvoke(argsObj);
-                    }
+                    return Expression.Lambda(Expression.Call(methodInfo, @params)).Compile().DynamicInvoke(argsObj);
                 }
-                else
-                {
-                    var expCall = Expression.Call(methodInfo, @params);
-                    Expression.Lambda(expCall).Compile().DynamicInvoke(argsObj);
-                }
+
+                var expCall = Expression.Call(methodInfo, @params);
+                Expression.Lambda(expCall).Compile().DynamicInvoke(argsObj);
             }
 
             return false;
@@ -169,7 +165,7 @@ namespace Geranium.Reflection
             var methodInfo = @object.GetType().GetMethods().FirstOrDefault(m => m.Name == method && m.GetParameters().Length == argsObj.Length);
             if (methodInfo == default)
             {
-                methodInfo = @object.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(m => m.Name == method);
+                methodInfo = @object.GetType().GetInstanceNonPublicMethodInfo(method);
             }
             if (methodInfo != default)
             {
@@ -224,7 +220,7 @@ namespace Geranium.Reflection
             var methodInfo = typeof(TFrom).GetMethods().FirstOrDefault(m => m.Name == method);
             if (methodInfo == default)
             {
-                methodInfo = typeof(TFrom).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(m => m.Name == method);
+                methodInfo = typeof(TFrom).GetInstanceNonPublicMethodInfo(method);
             }
             if (methodInfo != default)
             {
@@ -309,5 +305,8 @@ namespace Geranium.Reflection
         /// <returns>Method result, <see cref="default"/> if <see cref="void"/></returns>
         public static T CallGenericExtension<T>(this object @object, string method, Type sourceType, Type[] generic, params object[] argsObj) =>
             @object.CallGenericExtension(method, sourceType, generic, argsObj).As<T>();
+        
+        private static MethodInfo GetInstanceNonPublicMethodInfo(this Type type, string methodName) =>
+            type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(m => m.Name == methodName);
     }
 }
