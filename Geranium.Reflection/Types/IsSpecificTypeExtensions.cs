@@ -94,8 +94,8 @@ namespace Geranium.Reflection
             var dateTypes = new Type[]
                 {
                     typeof(DateTime), typeof(DateTime?),
-                    typeof (DateTimeOffset), typeof(DateTimeOffset?),
-                    typeof (TimeSpan), typeof(TimeSpan?)
+                    typeof(DateTimeOffset), typeof(DateTimeOffset?),
+                    typeof(TimeSpan), typeof(TimeSpan?)
                 };
             return dateTypes.Contains(type);
         }
