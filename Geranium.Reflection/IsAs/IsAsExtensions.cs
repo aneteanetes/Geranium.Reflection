@@ -1,4 +1,8 @@
-﻿namespace Geranium.Reflection
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Geranium.Reflection
 {
     /// <summary>
     /// C# IS and AS language expressions extensions

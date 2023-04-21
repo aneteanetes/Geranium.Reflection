@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -98,7 +100,7 @@ namespace Geranium.Reflection
             return value.DynamicInvoke(new object[] { argsObj }).As<T>();
         }
 
-        private static ConcurrentDictionary<Type, Delegate> ___CtorDelegateCache = new();
+        private static ConcurrentDictionary<Type, Delegate> ___CtorDelegateCache = new ConcurrentDictionary<Type, Delegate>();
 
         /// <summary>
         /// [Cached][Casted] Instantiate new object through expression tree

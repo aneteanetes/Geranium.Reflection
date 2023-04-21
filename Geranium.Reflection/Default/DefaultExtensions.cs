@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Linq.Expressions;
 
 namespace Geranium.Reflection
@@ -24,7 +25,7 @@ namespace Geranium.Reflection
             return value;
         }
 
-        private static readonly ConcurrentDictionary<Type, object> ___GetDefaultCache = new();
+        private static readonly ConcurrentDictionary<Type, object> ___GetDefaultCache = new ConcurrentDictionary<Type, object>();
 
     }
 }

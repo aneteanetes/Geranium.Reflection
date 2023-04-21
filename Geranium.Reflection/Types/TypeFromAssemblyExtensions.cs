@@ -1,6 +1,12 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
+#if NETCOREAPP3_1_OR_GREATER
 using System.Runtime.Loader;
+#endif
 
 namespace Geranium.Reflection
 {
@@ -104,7 +110,7 @@ namespace Geranium.Reflection
         {
             if (assemblyName == default)
             {
-                assemblyName = staticClassName.Split(".").Last();
+                assemblyName = staticClassName.Split('.').Last();
             }
 
             return staticClassName
@@ -158,7 +164,13 @@ namespace Geranium.Reflection
 
             if (!LoadedAssemblies.TryGetValue(assemblyName, out var assembly))
             {
-                assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
+                
+                assembly =
+#if (NETSTANDARD2_1 || NET46)
+                    Assembly.LoadFrom(path);
+#elif NETCOREAPP3_1_OR_GREATER
+                AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
+#endif
                 LoadedAssemblies.AddOrUpdate(assemblyName, assembly, (x, y) => assembly);
             }
 

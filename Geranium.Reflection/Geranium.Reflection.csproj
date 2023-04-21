@@ -2,9 +2,20 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFrameworks>net6.0;netstandard2.1;netcoreapp3.1;net46;</TargetFrameworks>
     <Nullable>disable</Nullable>
+    <Title>Geranium.Reflection</Title>
+    <Description>Reflection based on ExpressionTrees</Description>
+    <PackageProjectUrl>https://github.com/anetegithub/Geranium.Reflection</PackageProjectUrl>
+    <Copyright>anete.anetes</Copyright>
+    <RepositoryUrl>https://github.com/anetegithub/Geranium.Reflection</RepositoryUrl>
+    <PackageTags>reflection;expressions;expressiontree;</PackageTags>
+    <AssemblyVersion></AssemblyVersion>
+    <FileVersion></FileVersion>
+    <IncludeSymbols>True</IncludeSymbols>
+    <Product />
+    <Authors>anete.anetes</Authors>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
 </Project>

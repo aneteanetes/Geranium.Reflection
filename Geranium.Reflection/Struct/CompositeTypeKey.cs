@@ -1,4 +1,6 @@
-﻿namespace Geranium.Reflection.Struct
+﻿using System;
+
+namespace Geranium.Reflection.Struct
 {
     /// <summary>
     /// Composite key with System.Type and <see cref="T"/>

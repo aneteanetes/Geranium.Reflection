@@ -1,4 +1,5 @@
 ﻿using Geranium.Reflection.Struct;
+using System;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -40,6 +41,7 @@ namespace Geranium.Reflection
         {
             exception = null;
             var prop = @object.GetType().GetProperty(propName);
+
             var propType = prop.PropertyType;
             try
             {
