@@ -16,6 +16,7 @@
     <Product />
     <Authors>anete.anetes</Authors>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
