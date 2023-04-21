@@ -10,6 +10,12 @@ An alternative for reflection by extensions methods based on Expressions. This e
 * `as`
 * `call`
 
+## Supported targets:
+* `net6.0+`
+* `netcoreapp3.1+`
+* `netstandard2.1+`
+* `net46+`
+
 ## New
 Alternative for `Activator.CreateInstance` provided by `Expression.New` lambda cached by `System.Type` into `Delegate`.
 ### Available methods
