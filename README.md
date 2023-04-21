@@ -1,4 +1,6 @@
 # Geranium.Reflection
+![Nuget](https://img.shields.io/nuget/v/Geranium.Reflection)
+
 .NET reflection provided by ExpressionTrees.
 An alternative for reflection by extensions methods based on Expressions. This extensions allow create new instances without activator, set or get property values of unknown types and unknown properties, check equality with unknown type default value, call object methods and extension methods avoiding Invoke, and couple of non-expression extensions for as/is.
 
