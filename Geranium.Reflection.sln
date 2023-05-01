@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geranium.Reflection", "Geranium.Reflection\Geranium.Reflection.csproj", "{8611F2E2-AAE2-4944-AA95-13F1BC579A6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geranium.Reflection", "Geranium.Reflection\Geranium.Reflection.csproj", "{8611F2E2-AAE2-4944-AA95-13F1BC579A6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geranium.Reflection.Tests", "Geranium.Reflection.Tests\Geranium.Reflection.Tests.csproj", "{F8D20E0F-69BD-4B33-910C-FC980C885A90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geranium.Reflection.Benchmarks", "Geranium.Reflection.Benchmarks\Geranium.Reflection.Benchmarks.csproj", "{9A9A209C-1B88-4594-B952-95DF7099D20D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{8611F2E2-AAE2-4944-AA95-13F1BC579A6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8611F2E2-AAE2-4944-AA95-13F1BC579A6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8611F2E2-AAE2-4944-AA95-13F1BC579A6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8D20E0F-69BD-4B33-910C-FC980C885A90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8D20E0F-69BD-4B33-910C-FC980C885A90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8D20E0F-69BD-4B33-910C-FC980C885A90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8D20E0F-69BD-4B33-910C-FC980C885A90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A9A209C-1B88-4594-B952-95DF7099D20D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A9A209C-1B88-4594-B952-95DF7099D20D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A9A209C-1B88-4594-B952-95DF7099D20D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A9A209C-1B88-4594-B952-95DF7099D20D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

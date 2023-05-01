@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Geranium.Reflection.Ctor;
+using Geranium.Reflection.Struct;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Linq.Expressions;
@@ -34,6 +36,48 @@ namespace Geranium.Reflection
         /// <returns></returns>
         public static T New<T>(this Type type, params object[] argsObj)
             => type.New<T>(typeof(T).GetConstructors().FirstOrDefault(), argsObj);
+
+        public static T Newa<T>(this Type type, params object[] argsObj) 
+            => type.Newa<T>(type.FindConstructor(argsObj), argsObj);
+
+        public static object Newa(this Type type, params object[] argsObj)
+            => type.Newa<object>(argsObj);
+
+        /// <summary>
+        /// [Cached] Instantiate new object through expression tree
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="type"></param>
+        /// <param name="ctor"></param>
+        /// <param name="argsObj"></param>
+        /// <returns></returns>
+        public static T Newa<T>(this Type type, ConstructorInfo ctor, params object[] argsObj)
+        {
+            var key = new CompositeTypeKey<ConstructorInfo>(type, ctor);
+            if (!___CtorADelegateCache.TryGetValue(key, out var value))
+            {
+                if (ctor == default)
+                    return default;
+
+                ParameterInfo[] par = ctor.GetParameters();
+                Expression[] args = new Expression[par.Length];
+                ParameterExpression param = Expression.Parameter(typeof(object[]));
+                for (int i = 0; i != par.Length; ++i)
+                {
+                    args[i] = Expression.Convert(Expression.ArrayIndex(param, Expression.Constant(i)), par[i].ParameterType);
+                }
+                var expression = Expression.Lambda<Func<object[], T>>(
+                    Expression.New(ctor, args), param
+                );
+
+                value = expression.Compile();
+                ___CtorADelegateCache.AddOrUpdate(key, value, (x, y) => value);
+            }
+
+            return value.DynamicInvoke(new object[] { argsObj }).As<T>();
+        }
+        private static ConcurrentDictionary<CompositeTypeKey<ConstructorInfo>, Delegate> ___CtorADelegateCache = new ConcurrentDictionary<CompositeTypeKey<ConstructorInfo>, Delegate>();
+
 
         /// <summary>
         /// [Cached][Casted] Instantiate new object through expression tree with first constructor

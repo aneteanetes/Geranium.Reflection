@@ -26,7 +26,7 @@ namespace Geranium.Reflection.Struct
             return internalValue == InternalValue;
         }
 
-        private string InternalValue => Value.ToString() + Owner?.AssemblyQualifiedName ?? "";
+        private string InternalValue => Value?.ToString() + Owner?.AssemblyQualifiedName ?? "";
 
         public override int GetHashCode() => InternalValue.GetHashCode();
     }
