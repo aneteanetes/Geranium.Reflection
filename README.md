@@ -4,7 +4,7 @@
 .NET reflection provided by ExpressionTrees.
 An alternative for reflection by extensions methods based on Expressions. This extensions allow create new instances without activator, set or get property values of unknown types and unknown properties, check equality with unknown type default value, call object methods and extension methods avoiding Invoke, and couple of non-expression extensions for as/is.
 
-## Important!
+## Note about performance
 That's not speed-up alternative. You can check it by run some benchmarks. That's `alternative` of System.Reflection. 
 With .NET6 all techniques of 'speed-up' by `ExpressionTrees` and even `source generators` is pointless because of reflection improvements described here: https://devblogs.microsoft.com/dotnet/performance-improvements-in-net-6/#reflection 
 But still it can be useful alternative for full .NET Framework with 'old' runtime.
