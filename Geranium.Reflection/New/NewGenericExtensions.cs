@@ -28,7 +28,7 @@ namespace Geranium.Reflection
         public static object New(this object obj)
         {
             // activator faster on 0 args
-            return Activator.CreateInstance(obj is Type type ? type : obj.GetType()); //NewGenericCache.GetFunc(obj is Type type ? type : obj.GetType())();
+            return Activator.CreateInstance(obj is Type type ? type : obj.GetType()); //NewGenericCache.GetPropFunc(obj is Type type ? type : obj.GetType())();
         }
 
         [NewMethod(1)]

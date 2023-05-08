@@ -7,120 +7,70 @@ using System.Reflection;
 namespace Geranium.Reflection
 {
     /// <summary>
-    /// Extension methods for setting value of property by <see cref="Expression"/>
+    /// Extension methods for setting valueParam of propInfo by <see cref="Expression"/>
     /// </summary>
     public static class SetExtensions
     {
         /// <summary>
-        /// [Overload] Set property value by <see cref="SetPropertyExprType"/> 
-        /// with <see cref="Convert.ChangeType(object?, Type)"/> for usual properties, 
-        /// <see cref="Enum.Parse(Type, string)"/> for enums, 
-        /// and <see cref="PropertyInfo.SetValue(object?, object?)"/> for nullable,
-        /// <see cref="Exception"/> is not throwing
+        /// [Cached] Set object property value by ExpressionTrees
         /// </summary>
-        /// <param name="object"></param>
-        /// <param name="propName"></param>
-        /// <param name="propValue"></param>
-        /// <returns></returns>
-        public static bool SetPropertyExprConverted(this object @object, string propName, object propValue)
-            => @object.SetPropertyExprConvertedDebug(propName, propValue, out var _);
-
-        /// <summary>
-        /// Set property value by <see cref="SetPropertyExprType"/> 
-        /// with <see cref="Convert.ChangeType(object?, Type)"/> for usual properties, 
-        /// <see cref="Enum.Parse(Type, string)"/> for enums, 
-        /// and <see cref="PropertyInfo.SetValue(object?, object?)"/> for nullable,
-        /// <see cref="Exception"/> is not throwing
-        /// </summary>
-        /// <param name="object"></param>
-        /// <param name="propName"></param>
-        /// <param name="propValue"></param>
-        /// <param name="exception"></param>
-        /// <returns></returns>
-        public static bool SetPropertyExprConvertedDebug(this object @object, string propName, object propValue, out Exception exception)
+        /// <param name="obj">target object</param>
+        /// <param name="propName">object property</param>
+        /// <param name="propValue">value</param>
+        /// <exception cref="NotSupportedException">Property must be writeable</exception>
+        public static void SetPropValue(this object obj, string propName, object propValue)
         {
-            exception = null;
-            var prop = @object.GetType().GetProperty(propName);
+            var type = obj.GetType();
+            var key = InternalHasher.Hash(type, propName);
 
-            var propType = prop.PropertyType;
-            try
+            var compiled = cache.GetOrAdd(key, k =>
             {
-                if (propType.IsNullable())
-                {
-                    try
-                    {
-                        prop.SetValue(@object, propValue);
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        exception = ex;
-                        return false;
-                    }
-                }
+                var objParam = Expression.Parameter(typeof(object));
+                var valParam = Expression.Parameter(typeof(object));
 
-                if (propType.IsEnum)
+                var objT = Expression.Convert(objParam, type);
+
+                var objProp = Expression.Property(objT, propName);
+
+                if (objProp.Member is PropertyInfo property && property.CanWrite)
                 {
-                    var enumValue = Enum.Parse(propType, propValue.ToString());
-                    @object.SetPropertyExprType(propName, enumValue, propType);
-                }
-                else
-                {
-                    var newValue = Convert.ChangeType(propValue, propType);
-                    @object.SetPropertyExprType(propName, newValue, propType);
-                }
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-                return false;
-            }
-            return true;
+                    var propType = property.PropertyType;
+                    var valT = Expression.Convert(valParam, propType);
+                    var assign = Expression.Assign(objProp, valT);
+
+                    var func = Expression.Lambda<Action<object, object>>(assign, objParam, valParam).Compile();
+
+                    if (propType.IsEnum)
+                    {
+                        return (o, val) =>
+                        {
+                            var newVal = Enum.Parse(propType, val.ToString());
+                            func(o, newVal);
+                        };
+                    }
+
+                    if (!propType.IsNullable())
+                    {
+                        var valType = propValue == null ? null : propValue.GetType();
+                        if (propType!=valType)
+                        {
+                            return (o, val) =>
+                            {
+                                var newVal = Convert.ChangeType(val, propType);
+                                func(o, newVal);
+                            };
+                        }
+                    }
+
+                    return func;
+                }                
+                
+                throw new NotSupportedException($"Property of name {propName} can't be set!");
+            });
+
+            compiled(obj,propValue);
         }
 
-        /// <summary>
-        /// [Overload] Set property value by <see cref="SetPropertyExprType"/>, passing typeof(T)
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="object"></param>
-        /// <param name="propName"></param>
-        /// <param name="propValue"></param>
-        public static void SetPropertyExpr<T>(this object @object, string propName, T propValue)
-            => @object.SetPropertyExprType(propName, propValue, typeof(T));
-
-        /// <summary>
-        /// [Cached] Set property value by <see cref="Expression.Assign(Expression, Expression)"/>
-        /// </summary>
-        /// <param name="object"></param>
-        /// <param name="propName"></param>
-        /// <param name="propValue"></param>
-        /// <param name="valueType"></param>
-        public static void SetPropertyExprType(this object @object, string propName, object propValue, Type valueType)
-        {
-            var key = InternalHasher.Hash(@object.GetType(), propName);
-
-            if (!___SetBackingFieldValueExpressionCache.TryGetValue(key, out var value))
-            {
-                try
-                {
-                    var pType = Expression.Parameter(@object.GetType());
-                    var p = Expression.Parameter(valueType);
-
-                    var propExpr = Expression.Property(pType, propName);
-                    if (propExpr.Member is PropertyInfo property && !property.CanWrite)
-                        return;
-
-                    value = Expression.Lambda(Expression.Assign(propExpr, p), pType, p)
-                        .Compile();
-                }
-                catch { }
-
-                ___SetBackingFieldValueExpressionCache.AddOrUpdate(key, value, (k, v) => value);
-            }
-
-            value?.DynamicInvoke(@object, propValue);
-        }
-
-        private static readonly ConcurrentDictionary<int, Delegate> ___SetBackingFieldValueExpressionCache = new ConcurrentDictionary<int, Delegate>();
+        private static ConcurrentDictionary<int, Action<object, object>> cache = new ConcurrentDictionary<int, Action<object, object>>();
     }
 }

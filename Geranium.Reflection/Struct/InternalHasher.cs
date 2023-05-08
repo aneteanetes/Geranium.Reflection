@@ -9,6 +9,15 @@ namespace Geranium.Reflection.Struct
             return type.GetHashCode() ^ value.GetHashCode();
         }
 
+        public static int Hash(Type type1, Type type2, object value)
+        {
+            var _hashCode = type1.GetHashCode();
+            _hashCode = HashInternal(_hashCode, type2.GetHashCode());
+            _hashCode = HashInternal(_hashCode, value.GetHashCode());
+
+            return _hashCode;
+        }
+
         public static int Hash(Type type, object[] args)
         {
             var _hashCode= type.GetHashCode();

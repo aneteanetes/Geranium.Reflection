@@ -21,6 +21,12 @@ namespace Geranium.Reflection.Benchmarks
 
         public string S { get; set; }
 
+        public int? Nullable { get; set; }
+
+        public ConsoleColor Enum { get; set; }
+
+        public double WrongType { get; set; }
+
         public object O { get; set; }
 
         public double D { get; set; }
