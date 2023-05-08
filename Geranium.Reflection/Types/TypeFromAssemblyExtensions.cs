@@ -37,24 +37,24 @@ namespace Geranium.Reflection
         private static readonly ConcurrentDictionary<Type, Type[]> ___AllCache = new ConcurrentDictionary<Type, Type[]>();
 
         /// <summary>
-        /// [Casted] Get type from assembly and created by <see cref="NewExtensions.New{T}(object)"/>
+        /// [Casted] Get type from assembly and created by <see cref="NewGenericExtensions.New{T}(object)"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="assemblyType"></param>
         /// <returns></returns>
         public static T GetInstanceFromAssembly<T>(this object assemblyType)
             => assemblyType.GetTypeFromAssembly<T>()
-                .NewAs<T>();
+                .New().As<T>();
 
         /// <summary>
-        /// [Casted] Get type's from assembly and created by <see cref="NewExtensions.New{T}(object)"/>
+        /// [Casted] Get type's from assembly and created by <see cref="NewGenericExtensions.New{T}(object)"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="assemblyType"></param>
         /// <returns></returns>
         public static T[] GetInstancesFromAssembly<T>(this object assemblyType)
             => assemblyType.GetTypesFromAssembly<T>()
-                .Select(x => x.NewAs<T>())
+                .Select(x => x.New().As<T>())
                 .ToArray();
 
         /// <summary>
@@ -190,16 +190,17 @@ namespace Geranium.Reflection
             => typeName.GetTypeFromAssembly(assemblyName, (x, a) => a.GetType(x));
 
         /// <summary>
-        /// Get instance from <see cref="GetTypeFromAssembly(string, string, Func{string, Assembly, Type})"/> and <see cref="NewExtensions.NewAs{T}(Type, object[])"/>
+        /// Get instance from <see cref="GetTypeFromAssembly(string, string, Func{string, Assembly, Type})"/> and <see cref="NewGenericExtensions.NewAs{T}(Type, object[])"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <param name="assemblyName"></param>
         /// <param name="arguments"></param>
         /// <returns></returns>
-        public static T GetInstanceFromAssembly<T>(this string value, string assemblyName, params object[] arguments)
-            => value.GetTypeFromAssembly(assemblyName, (x, a) => a.GetType(value) ?? a.GetTypes().FirstOrDefault(t => t.Name == x))
-                .NewAs<T>(arguments);
+        //public static T GetInstanceFromAssembly<T>(this string value, string assemblyName, params object[] arguments)
+        //    => value.GetTypeFromAssembly(assemblyName, (x, a) => a.GetType(value) ?? a.GetTypes().FirstOrDefault(t => t.Name == x))
+        //        .New<T>(arguments);
+#warning commented
 
         /// <summary>
         /// Get types from assembly by user delegate
@@ -229,7 +230,7 @@ namespace Geranium.Reflection
         }
 
         /// <summary>
-        /// Get types instance's from assembly name and type name by <see cref="GetTypeFromAssembly(string, string, Func{string, Assembly, Type})"/> and <see cref="NewExtensions.New{T}(object)"/>
+        /// Get types instance's from assembly name and type name by <see cref="GetTypeFromAssembly(string, string, Func{string, Assembly, Type})"/> and <see cref="NewGenericExtensions.New{T}(object)"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="typeName"></param>

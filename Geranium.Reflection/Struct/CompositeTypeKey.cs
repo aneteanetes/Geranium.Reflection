@@ -2,32 +2,36 @@
 
 namespace Geranium.Reflection.Struct
 {
-    /// <summary>
-    /// Composite key with System.Type and <see cref="T"/>
-    /// <para>
-    /// Used for caching expression tree delegates
-    /// </para>
-    /// </summary>
-    public struct CompositeTypeKey<T>
+    public struct CompositeTypeKey
     {
-        public CompositeTypeKey(Type owner, T value)
-        {
-            Value = value;
-            Owner = owner;
-        }
-
-        public T Value { get; set; }
-
-        public Type Owner { get; set; }
+        private int _hashCode;
 
         public override bool Equals(object obj)
         {
-            var internalValue = obj.GetPropertyExpr<string>(nameof(InternalValue));
-            return internalValue == InternalValue;
+            if (obj==null)
+                return false;
+
+            if(obj is CompositeTypeKey key)
+                return _hashCode== key._hashCode;
+
+            return false;
         }
 
-        private string InternalValue => Value?.ToString() + Owner?.AssemblyQualifiedName ?? "";
+        public static CompositeTypeKey FromTypeValue(Type type, object value) => new CompositeTypeKey()
+        {
+            _hashCode = InternalHasher.Hash(type, value)
+        };
 
-        public override int GetHashCode() => InternalValue.GetHashCode();
+        public override int GetHashCode() => _hashCode;
+
+        public static bool operator ==(CompositeTypeKey left, CompositeTypeKey right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(CompositeTypeKey left, CompositeTypeKey right)
+        {
+            return !(left._hashCode==right._hashCode);
+        }
     }
 }

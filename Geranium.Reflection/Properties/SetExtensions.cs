@@ -97,11 +97,7 @@ namespace Geranium.Reflection
         /// <param name="valueType"></param>
         public static void SetPropertyExprType(this object @object, string propName, object propValue, Type valueType)
         {
-            var key = new CompositeTypeKey<string>()
-            {
-                Owner = @object.GetType(),
-                Value = propName
-            };
+            var key = InternalHasher.Hash(@object.GetType(), propName);
 
             if (!___SetBackingFieldValueExpressionCache.TryGetValue(key, out var value))
             {
@@ -125,6 +121,6 @@ namespace Geranium.Reflection
             value?.DynamicInvoke(@object, propValue);
         }
 
-        private static readonly ConcurrentDictionary<CompositeTypeKey<string>, Delegate> ___SetBackingFieldValueExpressionCache = new ConcurrentDictionary<CompositeTypeKey<string>, Delegate>();
+        private static readonly ConcurrentDictionary<int, Delegate> ___SetBackingFieldValueExpressionCache = new ConcurrentDictionary<int, Delegate>();
     }
 }

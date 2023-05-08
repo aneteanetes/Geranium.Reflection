@@ -13,7 +13,8 @@ namespace Geranium.Reflection.Benchmarks.Ctor
         [Benchmark]
         public object NewaExprEmpty()
         {
-            return typeof(BenchClass).Newa();
+            return null;
+            //return typeof(BenchClass).Newa();
         }
 
         [Benchmark]
@@ -25,7 +26,8 @@ namespace Geranium.Reflection.Benchmarks.Ctor
         [Benchmark]
         public object NewExpr3()
         {
-            return typeof(BenchClass).New(0,"0",new object());
+            return null;
+            //return typeof(BenchClass).New(0,"0",new object());
         }
 
         [Benchmark]
