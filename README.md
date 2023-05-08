@@ -4,10 +4,12 @@
 .NET reflection provided by ExpressionTrees.
 An alternative for reflection by extensions methods based on Expressions. This extensions allow create new instances without activator, set or get property values of unknown types and unknown properties, check equality with unknown type default value, call object methods and extension methods avoiding Invoke, and couple of non-expression extensions for as/is.
 
-## Note about performance
-That's not speed-up alternative. You can check it by run some benchmarks. That's `alternative` of System.Reflection. 
-With .NET6 all techniques of 'speed-up' by `ExpressionTrees` and even `source generators` is pointless because of reflection improvements described here: https://devblogs.microsoft.com/dotnet/performance-improvements-in-net-6/#reflection 
-But still it can be useful alternative for full .NET Framework with 'old' runtime.
+## Benchmarks
+ [Benchmarks resuts](https://github.com/anetegithub/Geranium.Reflection/wiki/Benchmarks)
+* `New()` average faster then `Activator` in **10** times
+* `GetPropValue()` average faster then `PropertyInfo` in **2** times
+* `SetPropValue()` average faster then `PropertyInfo` in **2** times
+
 
 ## Short list of features:
 * `New`
@@ -174,3 +176,8 @@ var materialize = filteredPropertyConverted.CallGenericExtension("ToList", typeo
 
 ## TypeFromAssemblyExtensions
 Extensions for getting `Type`s and instances of `Type` from `Assembly` and assembly names loaded from `AppDomain.Current.BasePath`.
+
+## Note about performance (package version 1.0.0)
+That's not speed-up alternative. You can check it by run some benchmarks. That's `alternative` of System.Reflection. 
+With .NET6 all techniques of 'speed-up' by `ExpressionTrees` and even `source generators` is pointless because of reflection improvements described here: https://devblogs.microsoft.com/dotnet/performance-improvements-in-net-6/#reflection 
+But still it can be useful alternative for full .NET Framework with 'old' runtime.
