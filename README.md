@@ -28,12 +28,9 @@ An alternative for reflection by extensions methods based on Expressions. This e
 ## New
 Alternative for `Activator.CreateInstance` provided by `Expression.New` lambda cached by `System.Type` into `Delegate`.
 ### Available methods
-* `T New<T>(this object)`
-* `T New<T>(this object, object[] ctorArgs)`
-* `T New<T>(this object, ConstructorInfo ctor, params object[] ctorArgs)` - main
-* `object New(this object)`
-* `object New(this object, object[] ctorArgs)` 
-* `object New(this object, bool oblyParameterless, object[] ctorArgs)` - FirstOrDefault ctor
+* `object New(this object obj)`
+* `object New<T1, T2, ..., T16>(this object obj, T1 arg1,T2 arg2,..., T16 arg16)`
+* `object New(this object obj, params object[] args)`
 
 ### Examples
 Getting `List<T>` as `IList` of `Type` in runtime:
@@ -49,7 +46,7 @@ Create and apply migration from migration type:
 ```C#
 void RunMigration(Type migrationType)
 {
-    var migration = migrationType.NewAs<CodegenMigration>();
+    var migration = migrationType.New().As<CodegenMigration>();
     ...
     migration.Apply();
     ...
@@ -57,40 +54,35 @@ void RunMigration(Type migrationType)
 ```
 ## Get property / Set property
 ## Get property values:
-There is basic method for getting value from property based on `Expression.PropertyOrField`:
-* `GetPropertyExprRaw(this object, string propertyName)`
-
-And two overloads:
-* `GetPropertyExpr<TValue>(this object, string propertyName)`
-* `GetStaticProperty(this Type, string propertyName)`
+There is three methods for getting value from property based on `Expression.PropertyOrField`:
+* `object GetPropValue(this object obj, string propName)`
+* `TValue GetPropValue<TValue>(this object obj, string propName)`
+* `TValue GetPropValue<THost, TValue>(this THost obj, string propName)`
 
 Example of getting 'Id' value of uknown type:
 ```C#
 var rowAccess = new RowAccess
 {
     Type = typeof(T),
-    IdValue = entity.GetPropertyExprRaw("Id") // value can be long/string/Guid or something
+    IdValue = entity.GetPropValue("Id") // value can be long/string/Guid or something
 };
 ```
 ## Set property values:
-There is couple of methods setting value or property: type-known - when you know type of property, and 'converted' - when value and property can be different types:
-* `SetPropertyExprType(this @object, string propName, object propValue, Type valueType)`
-* `SetPropertyExprConverted(this object @object, string propName, object propValue)`
+There is only one method for setting value:
+* `void SetPropValue(this object obj, string propName, object propValue)`
 
-'Converted' trying to convert value to property type, by:
-* if nullable, `Expressions` too hard to predict, so: `prop.SetValue`
-* if IsEnum, `Enum.Parse(value.ToString())`
-* in other cases, `Convert.ChangeType`
-
-After converting, using 'main' method `SetPropertyExprType`, which set value by `Delegate` compiled by expressions based on `Expression.Assign`.
+But it can works different based on passed value:
+* Usually (for `nullable` too) its just set value by lambda
+* For `enum` values it wraps action with `Enum.Parse(value.ToString())`
+* If you pass wrong `type` for value, it will try convert by `Convert.ChangeType`
 
 Example method of setting 'Id' value when you don't know type:
 ```C#
 public static void SetId<TId>(this object obj, TId value) 
-=> obj.SetPropertyExprConverted("Id", value);
+=> obj.SetPropValue("Id", value);
 
 public static void SetId(this object obj, object value) 
-=> obj.SetPropertyExprConverted("Id", value);
+=> obj.SetPropValue("Id", value);
 
 ```
 Example of create IList and bind to object:
@@ -98,7 +90,7 @@ Example of create IList and bind to object:
 var type = obj.GetType();
 var prop = type.GetProperty('Users');
 var list = prop.IList();
-obj.SetPropertyExprConverted(prop.Name, list);
+obj.SetPropValue(prop.Name, list);
 ```
 
 ## Default
