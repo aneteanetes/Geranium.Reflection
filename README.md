@@ -5,10 +5,28 @@
 An alternative for reflection by extensions methods based on Expressions. This extensions allow create new instances without activator, set or get property values of unknown types and unknown properties, check equality with unknown type default value, call object methods and extension methods avoiding Invoke, and couple of non-expression extensions for as/is.
 
 ## Benchmarks
- [Benchmarks resuts](https://github.com/anetegithub/Geranium.Reflection/wiki/Benchmarks)
-* `New()` average faster then `Activator` in **10** times
-* `GetPropValue()` average faster then `PropertyInfo` in **2** times
-* `SetPropValue()` average faster then `PropertyInfo` in **2** times
+Full table available here:
+ [Benchmark resuts](https://github.com/anetegithub/Geranium.Reflection/wiki/Benchmarks)
+ ### New
+`New()` average faster then `Activator` in **10** times, short info:
+|     Method |       Mean | Allocated |
+|----------- |-----------:|----------:|
+|       New  |  30.655 ns |     72 B |
+|   New (params) |  72.224 ns |       144 B |
+| Activator | 558.993 ns |     568 B |
+### Get
+`GetPropValue()` average faster then `PropertyInfo` in **2-5** times
+|       Method |       Mean |  Allocated |
+|------------- |-----------:|-----------:|
+| Reflection   | 103.186 ns |       24 B |
+| GetPropValue |  17.372 ns |       24 B |
+
+### Set
+`SetPropValue()` average faster then `PropertyInfo` in **2-5** times
+|          Method |      Mean | Allocated |
+|---------------- |----------:|----------:|
+|    Reflection   | 118.99 ns |      24 B |
+|    SetPropValue |  32.04 ns |     128 B |
 
 
 ## Short list of features:
