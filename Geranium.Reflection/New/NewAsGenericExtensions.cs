@@ -2,6 +2,6 @@
 {
     public static class NewAsGenericExtensions
     {
-        public static object NewAs<T>(this object obj) => obj.New().As<T>();
+        public static T NewAs<T>(this object obj) => obj.New().As<T>();
     }
 }
