@@ -15,6 +15,16 @@ namespace Geranium.Reflection.Tests.Props
         }
 
         [TestMethod]
+        public void SetFields()
+        {
+            var obj = new BenchClass() { };
+            obj.SetPropValue(nameof(BenchClass.StringField), "10");
+            obj.SetPropValue(nameof(BenchClass.IntField), 10);
+            Assert.AreEqual(obj.IntField, 10);
+            Assert.AreEqual(obj.StringField, "10");
+        }
+
+        [TestMethod]
         public void SetPropConverted()
         {
             var obj = new BenchClass() { };

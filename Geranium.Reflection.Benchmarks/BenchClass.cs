@@ -32,5 +32,9 @@ namespace Geranium.Reflection.Benchmarks
         public double D { get; set; }
 
         public override string ToString() => $"{I}{S}{O}{D}";
+
+        public string StringField;
+
+        public int IntField;
     }
 }

@@ -30,42 +30,50 @@ namespace Geranium.Reflection
 
                 var objT = Expression.Convert(objParam, type);
 
-                var objProp = Expression.Property(objT, propName);
+                var objProp = Expression.PropertyOrField(objT, propName);
 
-                if (objProp.Member is PropertyInfo property && property.CanWrite)
+                Type propType = null;
+
+                if (objProp.Member is PropertyInfo property)
                 {
-                    var propType = property.PropertyType;
-                    var valT = Expression.Convert(valParam, propType);
-                    var assign = Expression.Assign(objProp, valT);
+                    if (!property.CanWrite)
+                        throw new NotSupportedException($"Property of name {propName} can't be set!");
 
-                    var func = Expression.Lambda<Action<object, object>>(assign, objParam, valParam).Compile();
+                    propType = property.PropertyType;
+                }
 
-                    if (propType.IsEnum)
+                if (objProp.Member is FieldInfo field)
+                    propType = field.FieldType;
+
+
+                var valT = Expression.Convert(valParam, propType);
+                var assign = Expression.Assign(objProp, valT);
+
+                var func = Expression.Lambda<Action<object, object>>(assign, objParam, valParam).Compile();
+
+                if (propType.IsEnum)
+                {
+                    return (o, val) =>
+                    {
+                        var newVal = Enum.Parse(propType, val.ToString());
+                        func(o, newVal);
+                    };
+                }
+
+                if (!propType.IsNullable())
+                {
+                    var valType = propValue == null ? null : propValue.GetType();
+                    if (propType != valType)
                     {
                         return (o, val) =>
                         {
-                            var newVal = Enum.Parse(propType, val.ToString());
+                            var newVal = Convert.ChangeType(val, propType);
                             func(o, newVal);
                         };
                     }
+                }
 
-                    if (!propType.IsNullable())
-                    {
-                        var valType = propValue == null ? null : propValue.GetType();
-                        if (propType!=valType)
-                        {
-                            return (o, val) =>
-                            {
-                                var newVal = Convert.ChangeType(val, propType);
-                                func(o, newVal);
-                            };
-                        }
-                    }
-
-                    return func;
-                }                
-                
-                throw new NotSupportedException($"Property of name {propName} can't be set!");
+                return func;
             });
 
             compiled(obj,propValue);
