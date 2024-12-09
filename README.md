@@ -38,7 +38,10 @@ Full table available here:
 * `call`
 
 ## Supported targets:
-* `net6.0+`
+* `net6.0`
+* `net7.0`
+* `net8.0`
+* `net9.0`
 * `netcoreapp3.1+`
 * `netstandard2.1+`
 * `net46+`
